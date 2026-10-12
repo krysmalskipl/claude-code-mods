@@ -15,7 +15,7 @@ const activity = [
 ]
 
 // Stands for the engine, the key's sources and OpenRouter beneath the mod.
-function engine(on: any, opts: { info?: object; credits?: () => { total_credits: number; total_usage: number }; keyFrom?: 'env' | 'keychain' | 'none'; status?: () => number }) {
+function engine(on: any, opts: { info?: object; credits?: () => { total_credits: number; total_usage: number }; keyFrom?: 'env' | 'keychain' | 'shell' | 'none'; status?: () => number }) {
   const urls: string[] = []
   const auths: string[] = []
   const from = opts.keyFrom ?? 'keychain'
@@ -34,6 +34,12 @@ function engine(on: any, opts: { info?: object; credits?: () => { total_credits:
   on('ui.status', () => ({ value: undefined }))
   on('ui.render', ($: any, e: any) => $.ui.resolve(e).Text({ children: 'engine band' }))
   on('process.run', (_$: any, e: any) => {
+    if (e.argv[0] === 'printenv' && e.argv[1] === 'SHELL') return { value: { exitCode: 0, stdout: '/bin/zsh\n', stderr: '', isStdoutTruncated: false, isStderrTruncated: false } }
+    if (e.argv[1] === '-ilc') {
+      // a login shell whose startup files print a greeting first
+      const stdout = from === 'shell' ? `Welcome back!\n\n@or@\n@or@${KEY}\n` : '\n@or@\n@or@\n'
+      return { value: { exitCode: 0, stdout, stderr: '', isStdoutTruncated: false, isStderrTruncated: false } }
+    }
     const hit = (e.argv[0] === 'printenv' && e.argv[1] === 'OPENROUTER_API_KEY' && from === 'env') || (e.argv[0] === 'security' && from === 'keychain')
     return { value: { exitCode: hit ? 0 : 1, stdout: hit ? `${KEY}\n` : '', stderr: '', isStdoutTruncated: false, isStderrTruncated: false } }
   })
@@ -116,6 +122,13 @@ describe('openrouter-balance', () => {
     engine(on, { info: { ...regular, limit: 10, limit_remaining: 1.5, limit_reset: 'monthly' } })
     await start($)
     expect(await band($)).toMatch(/\$1\.50 of \$10\.00 key limit left, top up soon · \$0\.42 today/)
+  })
+
+  test('an app started from the Dock still finds the key ~/.zshrc sets', async ($, on) => {
+    const h = engine(on, { keyFrom: 'shell' })
+    await start($)
+    expect(h.auths[0]).toBe(`Bearer ${KEY}`)
+    expect(await band($)).toMatch(/\$0\.42 today/)
   })
 
   test('says when there is no key, and sends nothing', async ($, on) => {

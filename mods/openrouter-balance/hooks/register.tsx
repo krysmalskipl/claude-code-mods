@@ -287,21 +287,32 @@ async function call($: EngineInterface, path: string) {
   return JSON.parse(res.text)
 }
 
-// From /config first, then OPENROUTER_MANAGEMENT_KEY, OPENROUTER_API_KEY, then the macOS Keychain.
+// From /config first, then OPENROUTER_MANAGEMENT_KEY, OPENROUTER_API_KEY, then the macOS Keychain, and last the
+// same two variables as your login shell sets them: an app started from the Dock never read ~/.zshrc.
 async function apiKey($: EngineInterface) {
   if (key) return key
-  const run = async (argv: string[]) => {
-    const r = await $.process.run(argv).catch(() => null)
+  const run = async (argv: string[], timeoutMs?: number) => {
+    const r = await $.process.run(argv, { timeoutMs }).catch(() => null)
     return r && r.exitCode === 0 ? r.stdout.trim() : ''
   }
   const k =
     configKey ||
     (await run(['printenv', 'OPENROUTER_MANAGEMENT_KEY'])) ||
     (await run(['printenv', 'OPENROUTER_API_KEY'])) ||
-    (await run(['security', 'find-generic-password', '-s', KEYCHAIN_SERVICE, '-w']))
+    (await run(['security', 'find-generic-password', '-s', KEYCHAIN_SERVICE, '-w'])) ||
+    fromShell(await run([(await run(['printenv', 'SHELL'])) || '/bin/zsh', '-ilc', SHELL_PRINT], SHELL_MS))
   if (!k.startsWith('sk-or-')) throw new NoKey()
   return (key = k)
 }
+
+// Each variable on its own marked line, so whatever the shell's startup files print is skipped.
+const SHELL_PRINT = 'printf "\\n@or@%s\\n@or@%s\\n" "$OPENROUTER_MANAGEMENT_KEY" "$OPENROUTER_API_KEY"'
+const SHELL_MS = 10_000 // a slow ~/.zshrc must not hold the line up for long
+const fromShell = (out: string) =>
+  out
+    .split('\n')
+    .filter(l => l.startsWith('@or@sk-or-'))
+    .map(l => l.slice(4).trim())[0] ?? ''
 
 function problem(err: unknown) {
   if (err instanceof NoKey) return `No OpenRouter key found. ${SETUP}`

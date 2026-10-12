@@ -36,7 +36,8 @@ Needs Claude Code 2.1.287+.
 - Green from $5, yellow under $5, red under $2
 - `/openrouter-balance` shows the breakdown: balance, today, yesterday, last 30 days, and spend, requests and tokens by model. With a regular key: today, this week, this month, all time, its limit and budget
 - "Today" is the UTC day. With a management key it's the usage now minus where it stood when the mod first saw the day; a day first seen after 00:15 UTC shows "since HH:MM"
-- **Key:** from `/config` → openrouter-balance, else `OPENROUTER_MANAGEMENT_KEY`, else `OPENROUTER_API_KEY`, else the macOS Keychain item `openrouter-key`. Kept in memory only, sent only to openrouter.ai
+- **Key:** from `/config` → openrouter-balance, else `OPENROUTER_MANAGEMENT_KEY`, else `OPENROUTER_API_KEY`, else the macOS Keychain item `openrouter-key`, else those two variables as your login shell sets them (so the Claude desktop app, started from the Dock, still finds a key exported in `~/.zshrc`). Kept in memory only, sent only to openrouter.ai
+- After `claude plugin install` you'll see "1 userConfig option not yet set". That's the optional key above: with a key in your environment or Keychain, leave it empty
 - Refreshes every 5 minutes and after each turn; a minute after a failure. A failed refresh keeps the last numbers, marked offline
 
 ## Develop
