@@ -1,0 +1,16 @@
+{
+  "name": "krysmalskipl",
+  "description": "Claude Code mods by Jakub Krysmalski: lines above the prompt for the tools I use every day.",
+  "owner": {
+    "name": "Jakub Krysmalski",
+    "url": "https://krysmalski.pl"
+  },
+  "plugins": [
+    {
+      "name": "openrouter-balance",
+      "description": "Your OpenRouter credit above the prompt: the balance with a gauge, today's spend and where the money mostly went. /openrouter-balance shows the breakdown.",
+      "version": "0.1.0",
+      "source": "./mods/openrouter-balance"
+    }
+  ]
+}
