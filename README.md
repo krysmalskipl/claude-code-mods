@@ -25,6 +25,8 @@ Needs Claude Code 2.1.287+ in the terminal, or the Claude desktop app's Code tab
 
 ### 📏 meta-lint
 
+![meta-lint and link-check in Claude Code: /meta-lint details with a search snippet preview, /links, and the SEO line above the prompt](images/meta-lint.png)
+
 One line above the prompt after Claude edits a page or post:
 
 ```text
