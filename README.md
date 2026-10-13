@@ -1,6 +1,6 @@
 # Claude Code mods by krysmalskipl
 
-Mods for [Claude Code](https://claude.com/claude-code), built on function hooks. Install only the ones you want.
+Mods for [Claude Code](https://claude.com/claude-code), built for SEO and content work. Install only the ones you want.
 
 ## Install
 
@@ -20,6 +20,74 @@ Needs Claude Code 2.1.287+ in the terminal, or the Claude desktop app's Code tab
 | | Mod | What it does | Command |
 | --- | --- | --- | --- |
 | 🪙 | **openrouter-balance** | Your OpenRouter credit: the real balance with a gauge, today's spend and the model the money mostly went to. A regular API key shows its own spend and limit instead | `/openrouter-balance` |
+| 📏 | **meta-lint** | The SEO basics of the page or post Claude just edited: title and meta description length, H1 count, images without alt, word count. Markdown, MDX, Astro and HTML | `/meta-lint [file]` |
+| 🔗 | **link-check** | Checks the external links Claude adds. Broken ones go back to Claude so it can fix them, and show above the prompt | `/links [file]` |
+
+### 📏 meta-lint
+
+One line above the prompt after Claude edits a page or post:
+
+```text
+◆ SEO  post.md  title 58/60 ✓ · description 186/160 ✗ · H1 1 ✓ · 2 images without alt · 2,726 words
+```
+
+#### Install
+
+```sh
+claude plugin marketplace add krysmalskipl/claude-code-mods   # once per machine
+claude plugin install meta-lint@krysmalskipl
+```
+
+Restart Claude Code or type `/reload-plugins`. No key, no setup: it reads files on your machine and sends nothing anywhere. The line appears after Claude's first `Write` or `Edit` of a `.md`, `.mdx`, `.markdown`, `.astro`, `.html` or `.htm` file.
+
+#### What it checks
+
+| Check | Where it looks | Green | Yellow | Red |
+| --- | --- | --- | --- | --- |
+| **Title** | Frontmatter `seo_title`, `meta_title` or `title` (the first one set), else `<title>`, else the first `# H1` | 30 to 60 characters | under 30 | over 60, or missing |
+| **Description** | Frontmatter `seo_description`, `meta_description`, `description` or `excerpt`, else `<meta name="description">` | 70 to 160 characters | under 70 | over 160, or missing |
+| **H1** | `# ` lines and `<h1>` tags in the body, outside code blocks | one, or none when the frontmatter has a `title` (templates usually render it as the H1) | | more than one, or none at all |
+| **Images without alt** | `![](…)` and `<img>` without `alt` | | | any |
+| **Words** | the body, without code | shown, not judged | | |
+
+#### Commands
+
+- `/meta-lint` shows the details of the last page: each value, where it came from, how far over or under it is, and a search snippet preview cut where Google would likely cut it
+- `/meta-lint path/to/file.md` checks any file, edited or not
+
+Limits are in characters. Google cuts titles by pixel width (about 600 px), so a title of wide letters can be cut sooner: treat the numbers as a guide.
+
+### 🔗 link-check
+
+Checks every external link Claude adds to a page, post or template, while Claude is still working.
+
+```text
+◆ Links  2 not working · https://gone.dev/page (404) in post.md and 1 more · /links
+```
+
+#### Install
+
+```sh
+claude plugin marketplace add krysmalskipl/claude-code-mods   # once per machine
+claude plugin install link-check@krysmalskipl
+```
+
+Restart Claude Code or type `/reload-plugins`. No key, no setup.
+
+#### How it works
+
+- After each `Write` or `Edit` of a `.md`, `.mdx`, `.astro`, `.html`, `.tsx`, `.jsx`, `.vue`, `.svelte`, `.php`, `.njk`, `.liquid` or `.twig` file, it finds the `http(s)` links **new in that edit** and asks each one (a `HEAD`, or a `GET` when the host refuses `HEAD`)
+- **Claude is told**: links that answer 4xx or 5xx, or don't answer at all, go back to Claude with the edit's result, so it can fix or remove them in the same turn
+- **You see them** above the prompt until they're gone from the file. `/links` lists them
+- An edit waits at most 6 seconds for its links. A slower host's answer comes later as a toast
+- 401, 403 and 429 count as working: they're usually bot walls or rate limits, and the page opens in a browser
+- Skipped: `localhost`, `127.0.0.1`, `example.com`, `.local`, `.test` and links with template placeholders (`${…}`, `{{…}}`)
+- Each URL is asked once per session, at most 25 per edit and 6 at a time. Requests go from your machine straight to each link's host, nowhere else
+
+#### Commands
+
+- `/links` lists the links that don't work, and where
+- `/links path/to/file.md` checks every link in a file now (up to 100), with ✓ working, ↪ redirect, ~ blocks bots and ✗ broken
 
 ### 🪙 openrouter-balance
 

@@ -1,6 +1,6 @@
 {
   "name": "krysmalskipl",
-  "description": "Claude Code mods by Jakub Krysmalski: lines above the prompt for the tools I use every day.",
+  "description": "Claude Code mods by Jakub Krysmalski, built for SEO and content work: lines above the prompt and checks on what Claude writes.",
   "owner": {
     "name": "Jakub Krysmalski",
     "url": "https://krysmalski.pl"
@@ -11,6 +11,18 @@
       "description": "Your OpenRouter credit above the prompt: the balance with a gauge, today's spend and where the money mostly went. /openrouter-balance shows the breakdown.",
       "version": "0.1.2",
       "source": "./mods/openrouter-balance"
+    },
+    {
+      "name": "meta-lint",
+      "description": "SEO basics of the page or post Claude just edited, above the prompt: title and meta description length, H1 count, images without alt, word count. /meta-lint shows the details and a search snippet preview.",
+      "version": "0.1.0",
+      "source": "./mods/meta-lint"
+    },
+    {
+      "name": "link-check",
+      "description": "Checks the external links Claude adds to pages, posts and templates. Broken ones go back to Claude so it can fix them, and show above the prompt. /links lists them or checks a whole file.",
+      "version": "0.1.0",
+      "source": "./mods/link-check"
     }
   ]
 }

@@ -1,0 +1,10 @@
+{
+  "name": "link-check",
+  "version": "0.1.0",
+  "description": "Checks the external links Claude adds to pages, posts and templates. Broken ones go back to Claude so it can fix them, and show above the prompt. /links lists them or checks a whole file.",
+  "author": {
+    "name": "Jakub Krysmalski",
+    "url": "https://github.com/krysmalskipl"
+  },
+  "types": "./types/index.d.ts"
+}

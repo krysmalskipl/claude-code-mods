@@ -1,0 +1,10 @@
+{
+  "name": "meta-lint",
+  "version": "0.1.0",
+  "description": "SEO basics of the page or post Claude just edited, above the prompt: title and meta description length, H1 count, images without alt, word count. /meta-lint shows the details and a search snippet preview.",
+  "author": {
+    "name": "Jakub Krysmalski",
+    "url": "https://github.com/krysmalskipl"
+  },
+  "types": "./types/index.d.ts"
+}
