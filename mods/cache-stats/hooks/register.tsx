@@ -15,7 +15,7 @@ const USAGE = 'Usage: /cache [hide|show]'
 type Segment = { text: string; color?: string }
 
 export const register: Register = (on, options) => {
-  const ttl: Ttl = options.ttl === '1h' ? '1h' : '5m'
+  const ttl: Ttl = options.ttl === '5m' ? '5m' : '1h'
 
   on('session.start', async ($, e, next) => {
     await $.command

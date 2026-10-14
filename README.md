@@ -136,7 +136,7 @@ Google publishes no snippet limits: the pixel widths are the ones SEO tools have
 Claude Code resends the whole conversation with every request, and the prompt cache is what keeps that cheap and fast. This shows what the cache is doing, live.
 
 ```text
-◆ Cache  █████████░ 96% hit · warm 3m · 133k cached · session 1h 12m (23m working) · avg 94% · 38 requests
+◆ Cache  █████████░ 96% hit · warm 58m · 133k cached · session 1h 12m (23m working) · avg 94% · 38 requests
 ◆ Cache  ░░░░░░░░░░ 0% hit · cold, next message re-caches 133k · session 2h 05m (31m working)
 ```
 
@@ -151,11 +151,13 @@ Restart Claude Code or type `/reload-plugins`. The line appears after Claude's f
 
 #### Set the cache lifetime
 
-The hit rate is measured, but the **warm** countdown needs to know how long your cache lives: **5m** on an API key, usually **1h** on a Claude subscription. The default is 5m. Change it in `/config` → cache-stats, or from a shell:
+The hit rate is measured, but the **warm** countdown needs to know how long your cache lives: **1h** on a Claude subscription (the default) or **5m** on an API key. On an API key, set it in `/config` → cache-stats, or from a shell:
 
 ```sh
-echo '{"ttl":"1h"}' | claude plugin configure cache-stats@krysmalskipl --values-stdin
+echo '{"ttl":"5m"}' | claude plugin configure cache-stats@krysmalskipl --values-stdin
 ```
+
+Not sure which you have? Look at your session transcript: `ephemeral_1h_input_tokens` in the usage rows means a 1h cache.
 
 #### What the line shows
 

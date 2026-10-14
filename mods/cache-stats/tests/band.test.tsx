@@ -38,7 +38,7 @@ test('counts a request and draws the band on every surface', async ($, on) => {
   for (const surface of ['terminal', 'desktop'] as const) {
     const ui = await $.ui.mount({ ...BAND, surface })
     expect(await ui.find({ type: 'Text', text: /96% hit/ })).toBeDefined()
-    expect(await ui.find({ type: 'Text', text: /warm 3m/ })).toBeDefined()
+    expect(await ui.find({ type: 'Text', text: /warm 58m/ })).toBeDefined()
     expect(await ui.find({ type: 'Text', text: /133k cached/ })).toBeDefined()
     await ui.unmount()
   }
