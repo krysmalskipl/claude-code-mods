@@ -23,6 +23,12 @@
       "description": "Checks the external links Claude adds to pages, posts and templates. Broken ones go back to Claude so it can fix them, and show above the prompt. /links lists them or checks a whole file.",
       "version": "0.1.0",
       "source": "./mods/link-check"
+    },
+    {
+      "name": "share-preview",
+      "description": "See how the page you're building shows up in Google and when shared on X, LinkedIn, Slack and Facebook, with the problems that would cost you clicks. /preview opens it, live as Claude edits.",
+      "version": "0.1.0",
+      "source": "./mods/share-preview"
     }
   ]
 }

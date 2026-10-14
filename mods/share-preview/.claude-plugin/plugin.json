@@ -1,0 +1,10 @@
+{
+  "name": "share-preview",
+  "version": "0.1.0",
+  "description": "See how the page you're building shows up in Google and when shared on X, LinkedIn, Slack and Facebook, with the problems that would cost you clicks. /preview opens it, live as Claude edits.",
+  "author": {
+    "name": "Jakub Krysmalski",
+    "url": "https://github.com/krysmalskipl"
+  },
+  "types": "./types/index.d.ts"
+}
