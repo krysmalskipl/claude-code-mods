@@ -33,7 +33,7 @@
     {
       "name": "cache-stats",
       "description": "Your prompt cache above the prompt: how long it stays warm, the hit rate, what a cold restart re-caches, and how long the session has run. /cache shows every miss and why.",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "source": "./mods/cache-stats"
     }
   ]
