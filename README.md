@@ -23,6 +23,7 @@ Needs Claude Code 2.1.287+ in the terminal, or the Claude desktop app's Code tab
 | 📏 | **meta-lint** | The SEO basics of the page or post Claude just edited: title and meta description length, H1 count, images without alt, word count. Markdown, MDX, Astro and HTML | `/meta-lint [file]` |
 | 🔗 | **link-check** | Checks the external links Claude adds. Broken ones go back to Claude so it can fix them, and show above the prompt | `/links [file]` |
 | 🪧 | **share-preview** | How the page looks in Google (desktop and mobile, cut by pixel width) and as a shared link on LinkedIn, Facebook, Slack and X, with what would cost you clicks. Live while Claude edits | `/preview [url \| file]` |
+| ⏱️ | **cache-stats** | Your prompt cache above the prompt: hit rate, how long it stays warm, what a cold restart re-caches, and how long the session has run. `/cache` lists every miss and why | `/cache [hide\|show]` |
 
 ### 📏 meta-lint
 
@@ -129,6 +130,51 @@ Restart Claude Code or type `/reload-plugins`. No key, no setup.
 The findings also go to Claude as context, so "fix these" just works. Pages and images are fetched from your machine; nothing is sent anywhere else.
 
 Google publishes no snippet limits: the pixel widths are the ones SEO tools have measured for years. Treat them as a close guide, not a promise.
+
+### ⏱️ cache-stats
+
+Claude Code resends the whole conversation with every request, and the prompt cache is what keeps that cheap and fast. This shows what the cache is doing, live.
+
+```text
+◆ Cache  █████████░ 96% hit · warm 3m · 133k cached · session 1h 12m (23m working) · avg 94% · 38 requests
+◆ Cache  ░░░░░░░░░░ 0% hit · cold, next message re-caches 133k · session 2h 05m (31m working)
+```
+
+#### Install
+
+```sh
+claude plugin marketplace add krysmalskipl/claude-code-mods   # once per machine
+claude plugin install cache-stats@krysmalskipl
+```
+
+Restart Claude Code or type `/reload-plugins`. The line appears after Claude's first reply. It reads Claude Code's own usage figures and sends nothing anywhere.
+
+#### Set the cache lifetime
+
+The hit rate is measured, but the **warm** countdown needs to know how long your cache lives: **5m** on an API key, usually **1h** on a Claude subscription. The default is 5m. Change it in `/config` → cache-stats, or from a shell:
+
+```sh
+echo '{"ttl":"1h"}' | claude plugin configure cache-stats@krysmalskipl --values-stdin
+```
+
+#### What the line shows
+
+- **Hit rate** of the last request: how much of the prompt the cache served. Green from 80%, yellow from 50%, red under
+- **Warm 3m**: time left before the cache lapses, counted from the last reply. Once it has, the line says what the next message re-caches
+- **Cached**: tokens in the cache now, the size of the last prompt
+- **Session** time since the session started, and how much of it the model spent working
+- **avg** and **requests**: the hit rate over the whole session and the number of requests to the model
+
+On a narrow terminal the right-hand parts drop out first.
+
+#### Commands
+
+- `/cache` shows the details: state, session totals (read from cache, written, sent uncached, generated), every **miss** with the reason, and the last requests
+- `/cache hide` and `/cache show` take the line away and bring it back
+
+A miss is a large prompt (5,000+ tokens) the cache mostly did not serve. The reason is told by the gap before it: **idle longer than the cache lives** means it simply expired; **soon after the last request** means something under the cache changed, such as `/model`, `/compact`, an edited `CLAUDE.md` or a new MCP tool. That second kind is the one worth hunting down, since each costs a full re-cache.
+
+Subagents run on caches of their own and are not counted.
 
 ### 🪙 openrouter-balance
 

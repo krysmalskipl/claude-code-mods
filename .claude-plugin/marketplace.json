@@ -29,6 +29,12 @@
       "description": "See how the page you're building shows up in Google and when shared on X, LinkedIn, Slack and Facebook, with the problems that would cost you clicks. /preview opens it, live as Claude edits.",
       "version": "0.1.0",
       "source": "./mods/share-preview"
+    },
+    {
+      "name": "cache-stats",
+      "description": "Your prompt cache above the prompt: how long it stays warm, the hit rate, what a cold restart re-caches, and how long the session has run. /cache shows every miss and why.",
+      "version": "0.1.0",
+      "source": "./mods/cache-stats"
     }
   ]
 }
