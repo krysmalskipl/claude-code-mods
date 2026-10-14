@@ -22,6 +22,7 @@ Needs Claude Code 2.1.287+ in the terminal, or the Claude desktop app's Code tab
 | 🪙 | **openrouter-balance** | Your OpenRouter credit: the real balance with a gauge, today's spend and the model the money mostly went to. A regular API key shows its own spend and limit instead | `/openrouter-balance` |
 | 📏 | **meta-lint** | The SEO basics of the page or post Claude just edited: title and meta description length, H1 count, images without alt, word count. Markdown, MDX, Astro and HTML | `/meta-lint [file]` |
 | 🔗 | **link-check** | Checks the external links Claude adds. Broken ones go back to Claude so it can fix them, and show above the prompt | `/links [file]` |
+| 🪧 | **share-preview** | How the page looks in Google (desktop and mobile, cut by pixel width) and as a shared link on LinkedIn, Facebook, Slack and X, with what would cost you clicks. Live while Claude edits | `/preview [url \| file]` |
 
 ### 📏 meta-lint
 
@@ -90,6 +91,44 @@ Restart Claude Code or type `/reload-plugins`. No key, no setup.
 
 - `/links` lists the links that don't work, and where
 - `/links path/to/file.md` checks every link in a file now (up to 100), with ✓ working, ↪ redirect, ~ blocks bots and ✗ broken
+
+### 🪧 share-preview
+
+See the page you're building the way people will meet it: as a Google result and as a link someone shares. A pane next to the chat, updated while Claude edits.
+
+```text
+✗ og:image "/og.png" is relative: platforms need a full https:// URL
+! Title is 668px wide, Google shows about 600px: the end is cut
+! No twitter:card: X shows a small thumbnail, add summary_large_image for the big card
+✓ Description fits desktop and mobile (512px)
+```
+
+#### Install
+
+```sh
+claude plugin marketplace add krysmalskipl/claude-code-mods   # once per machine
+claude plugin install share-preview@krysmalskipl
+```
+
+Restart Claude Code or type `/reload-plugins`. No key, no setup.
+
+#### Use it
+
+- `/preview` shows the page Claude edited last: HTML, Astro, Vue, Svelte, JSX with `<Head>`, a Next.js `metadata` export or Markdown frontmatter. The pane follows every later edit of that file
+- `/preview localhost:3000/pricing` reads the page your dev server renders, the most accurate view. It refreshes after each of Claude's turns
+- `/preview https://example.com` checks a live page
+- In the pane: `g` Google, `s` shared link, `r` refresh
+
+#### What it shows
+
+- **Google**: the desktop and mobile result, the title cut at about 600 px and the description at about 920 px (desktop) and 680 px (mobile), measured in Arial glyph widths the way Google draws them, not in characters
+- **Shared link**: the LinkedIn and Facebook card, Slack's unfurl and X's card (large, small or none, from `twitter:card`), with the fallbacks each platform uses when a tag is missing
+- **Checks**, worst first: `noindex`, a missing title, a missing or relative or local `og:image`, an `og:image` that doesn't load (it asks the URL, or looks in `public/` and `static/` for a local file), a `canonical` pointing at localhost, titles and descriptions too long or too short, a missing `twitter:card`, `og:image:alt` or `<html lang>`
+- Tags set in code (`{post.title}`, `generateMetadata`) are marked as such: `/preview <url>` reads them rendered
+
+The findings also go to Claude as context, so "fix these" just works. Pages and images are fetched from your machine; nothing is sent anywhere else.
+
+Google publishes no snippet limits: the pixel widths are the ones SEO tools have measured for years. Treat them as a close guide, not a promise.
 
 ### 🪙 openrouter-balance
 
